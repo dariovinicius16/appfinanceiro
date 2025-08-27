@@ -2,39 +2,113 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>App Financeiro Semanal</title>
 <style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f0f4f8; color:#333; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; padding:20px; }
-.container { background:#fff; padding:30px 40px; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.15); max-width:450px; width:100%; }
-h1 { text-align:center; color:#1a73e8; margin-bottom:25px; }
-label { display:block; margin-bottom:10px; font-weight:bold; }
-input[type="text"], input[type="date"], input[type="number"] { width:100%; padding:10px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc; text-transform:uppercase; font-weight:bold; }
-button { width:100%; padding:12px; background:#1a73e8; color:white; font-size:16px; font-weight:bold; border:none; border-radius:10px; cursor:pointer; transition:0.3s; }
-button:hover { background:#155ab6; }
-h2 { margin-top:30px; color:#1a73e8; border-bottom:2px solid #1a73e8; padding-bottom:5px; }
-ul { list-style:none; padding-left:0; }
-ul li { background:#f0f4f8; margin-bottom:8px; padding:8px 12px; border-radius:8px; font-weight:bold; }
-p { font-size:18px; font-weight:bold; margin-top:15px; }
+  body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background:#f0f4f8; 
+    color:#333; 
+    display:flex; 
+    justify-content:center; 
+    align-items:flex-start; 
+    min-height:100vh; 
+    padding:20px; 
+    margin:0;
+  }
+  .container { 
+    background:#fff; 
+    padding:25px 30px; 
+    border-radius:15px; 
+    box-shadow:0 8px 20px rgba(0,0,0,0.15); 
+    max-width:450px; 
+    width:100%; 
+  }
+  h1 { 
+    text-align:center; 
+    color:#1a73e8; 
+    margin-bottom:25px; 
+    font-size:1.8rem;
+  }
+  label { 
+    display:block; 
+    margin-bottom:8px; 
+    font-weight:bold; 
+    font-size:0.95rem;
+  }
+  input[type="text"], 
+  input[type="date"], 
+  input[type="number"] { 
+    width:100%; 
+    padding:12px; 
+    margin-bottom:15px; 
+    border-radius:8px; 
+    border:1px solid #ccc; 
+    text-transform:uppercase; 
+    font-weight:bold; 
+    font-size:0.95rem;
+  }
+  button { 
+    width:100%; 
+    padding:14px; 
+    background:#1a73e8; 
+    color:white; 
+    font-size:1rem; 
+    font-weight:bold; 
+    border:none; 
+    border-radius:10px; 
+    cursor:pointer; 
+    transition:0.3s; 
+  }
+  button:hover { background:#155ab6; }
+  h2 { 
+    margin-top:25px; 
+    color:#1a73e8; 
+    border-bottom:2px solid #1a73e8; 
+    padding-bottom:5px; 
+    font-size:1.2rem;
+  }
+  ul { list-style:none; padding-left:0; margin:0; }
+  ul li { 
+    background:#f0f4f8; 
+    margin-bottom:8px; 
+    padding:10px 12px; 
+    border-radius:8px; 
+    font-weight:bold; 
+    font-size:0.9rem;
+  }
+  p { font-size:1rem; font-weight:bold; margin-top:15px; }
+
+  /* Responsividade */
+  @media (max-width: 600px) {
+    .container {
+      padding:20px;
+      border-radius:12px;
+    }
+    h1 { font-size:1.5rem; }
+    button { font-size:0.95rem; padding:12px; }
+    ul li { font-size:0.85rem; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Gastos Semanais</h1>
+  <h1>Gastos Semanais</h1>
 
-<label>Data:</label>
-<input type="date" id="data">
+  <label>Data:</label>
+  <input type="date" id="data">
 
-<label>Descrição:</label>
-<input type="text" id="descricao" placeholder="Ex: ALIMENTAÇÃO">
+  <label>Descrição:</label>
+  <input type="text" id="descricao" placeholder="Ex: ALIMENTAÇÃO">
 
-<label>Valor:</label>
-<input type="number" id="valor" placeholder="Ex: 50.00">
+  <label>Valor:</label>
+  <input type="number" id="valor" placeholder="Ex: 50,00">
 
-<button onclick="adicionarGasto()">Adicionar Gasto</button>
+  <button onclick="adicionarGasto()">Adicionar Gasto</button>
 
-<h2>Gastos da Semana Atual</h2>
-<ul id="listaGastos"></ul>
-<p>Total da Semana: R$ <span id="total">0</span></p>
+  <h2>Gastos da Semana Atual</h2>
+  <ul id="listaGastos"></ul>
+  <p>Total da Semana: R$ <span id="total">0</span></p>
 </div>
 
 <script>
@@ -45,7 +119,10 @@ async function adicionarGasto(){
   const descricao = document.getElementById('descricao').value.toUpperCase();
   const valor = document.getElementById('valor').value;
 
-  if(!data || !descricao || !valor){ alert("Preencha todos os campos"); return; }
+  if(!data || !descricao || !valor){ 
+    alert("Preencha todos os campos"); 
+    return; 
+  }
 
   const formData = new URLSearchParams();
   formData.append('data', data);
@@ -55,17 +132,19 @@ async function adicionarGasto(){
   try{
     const response = await fetch(API_URL, { method:"POST", body: formData });
     const result = await response.json();
-    if(result.status==="sucesso"){
-      alert(result.message); // "Registro adicionado!"
+
+    if(result.status === "sucesso"){
+      alert("Registro adicionado!");
       carregarGastos();
       document.getElementById('data').value="";
       document.getElementById('descricao').value="";
       document.getElementById('valor').value="";
     } else {
-      alert("Erro: "+result.message);
+      alert("Erro: " + result.message);
     }
   } catch(err){
     alert("Erro ao conectar com o servidor. Abra o HTML via servidor local ou Live Server.");
+    console.error(err);
   }
 }
 
